@@ -1,40 +1,62 @@
+# -*- coding: utf-8 -*-
 from selenium import webdriver
-import unittest
-import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
+import unittest, time, re
 
 
-
-class AddContact(unittest.TestCase):
+class UntitledTestCase(unittest.TestCase):
     def setUp(self):
-        self.wd = webdriver.Firefox()
-        self.wd.implicitly_wait(30)
+        self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(30)
+        self.base_url = "https://www.google.com/"
+        self.verificationErrors = []
+        self.accept_next_alert = True
 
-    def test_login(self):
-        wd = self.wd
-        self.open_dozor(wd)
-        self.login(wd)
-        wd.get("https://10.201.64.31/#!dashboard")
-        wd.find_element_by_id("main-menu-1041-innerCt").click()
-        wd.find_element_by_id("button-1055-btnInnerEl").click()
-        wd.find_element_by_xpath("//div[@id='configuration-groups-dataview-3542']/div[4]/div[4]/div/div").click()
+    def test_untitled_test_case(self):
+        driver = self.driver
+        driver.get("https://10.201.64.31/#dashboard")
+        driver.find_element_by_id("textfield-1013-inputEl").click()
+        driver.find_element_by_id("textfield-1013-inputEl").clear()
+        driver.find_element_by_id("textfield-1013-inputEl").send_keys("superadmin")
+        driver.find_element_by_id("textfield-1017-inputEl").click()
+        driver.find_element_by_id("textfield-1017-inputEl").clear()
+        driver.find_element_by_id("textfield-1017-inputEl").send_keys("Zaq1@wsX")
+        driver.find_element_by_id("button-1024-btnInnerEl").click()
+        driver.find_element_by_id("button-1079-btnIconEl").click()
 
-    def login(self, wd):
-        wd.find_element_by_id("textfield-1013-inputEl").click()
-        wd.find_element_by_id("textfield-1013-inputEl").clear()
-        wd.find_element_by_id("textfield-1013-inputEl").send_keys("superadmin")
-        wd.find_element_by_id("textfield-1017-inputEl").click()
-        wd.find_element_by_id("textfield-1017-inputEl").clear()
-        wd.find_element_by_id("textfield-1017-inputEl").send_keys("Zaq1@wsX")
-        time.sleep(1)
-        wd.find_element_by_xpath(u"//*/text()[normalize-space(.)='Login']/parent::*").click()
-        time.sleep(3)
+    def is_element_present(self, how, what):
+        try:
+            self.driver.find_element(by=how, value=what)
+        except NoSuchElementException as e:
+            return False
+        return True
 
-    def open_dozor(self, wd):
-        wd.get("https://10.201.64.31/#dashboard")
-        time.sleep(5)
+    def is_alert_present(self):
+        try:
+            self.driver.switch_to_alert()
+        except NoAlertPresentException as e:
+            return False
+        return True
+
+    def close_alert_and_get_its_text(self):
+        try:
+            alert = self.driver.switch_to_alert()
+            alert_text = alert.text
+            if self.accept_next_alert:
+                alert.accept()
+            else:
+                alert.dismiss()
+            return alert_text
+        finally:
+            self.accept_next_alert = True
 
     def tearDown(self):
-        self.wd.quit()
+        self.driver.quit()
+        self.assertEqual([], self.verificationErrors)
 
 
 if __name__ == "__main__":
