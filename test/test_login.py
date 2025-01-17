@@ -17,7 +17,7 @@ class AddContact(unittest.TestCase):
         wd = self.wd
         self.open_dozor(wd)
         self.login(wd)
-        self.test_close_redwindow(wd)
+        self.close_redwindow(wd)
         self.open_left_panel(wd)
         wd.find_element_by_css_selector("#button-1059-btnEl").click() #открыть система
         time.sleep(3)
@@ -27,7 +27,13 @@ class AddContact(unittest.TestCase):
         time.sleep(3)
         wd.find_element_by_xpath("//div[4]/div[4]/div/div").click() #параметры_досье
         time.sleep(3)
-        wd.find_element_by_id("button-4349-btnIconEl").click()
+        scroll_by = wd.find_element_by_xpath(
+            u"(.//*[normalize-space(text()) and normalize-space(.)='Источники данных досье'])[1]/following::span[1]")
+        wd.execute_script("arguments[0].scrollIntoView(true);", scroll_by)
+        time.sleep(3)
+        wd.find_element_by_xpath("//table[@id='treeview-1335-record-2318']/tbody/tr/td/div/span/span[4]").click()
+        wd.find_element_by_xpath("//table[@id='treeview-1335-record-2991']/tbody/tr/td[2]/div").click()
+        time.sleep(3)
 
     def open_left_panel(self, wd):
         wd.find_element_by_id("container-1063-innerCt").click()  # клик в пустое место
@@ -36,7 +42,7 @@ class AddContact(unittest.TestCase):
         hover.perform()
         time.sleep(3)
 
-    def test_close_redwindow(self, wd):
+    def close_redwindow(self, wd):
         wd.find_element_by_xpath("//div[@id='tool-1041-toolEl']").click()  # закрыть окно с ошибкой
         time.sleep(3)
 
